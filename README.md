@@ -27,4 +27,4 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 ```
-You can then enable/disable it, start/stop etc. using [`systemctl`](https://www.freedesktop.org/software/systemd/man/systemctl.html).
+You can then enable/disable, start/stop it etc. using [`systemctl`](https://www.freedesktop.org/software/systemd/man/systemctl.html).
