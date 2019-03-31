@@ -9,7 +9,7 @@ This script pings a device on your network and reports whether it is online or n
 
 All credits go to "Chopper_Rob" for the core logic of this script, as published on https://www.domoticz.com/wiki/Presence_detection.
 
-What I did in this version is to upgrade it from Python 2 to Python 3.6+ and make it suitable to run it as a `systemd` service. By running it as such as service the script becomes more compact and stable at the same time.
+What I did in this version is to upgrade it from Python 2 to Python 3.6+ and make it suitable to be run as a `systemd` service. By running it as such as service the script becomes more compact and stable at the same time.
 
 A simple `.service` file to manage this script would go into `/etc/systemd/system/` and could like this:
 
