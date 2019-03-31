@@ -5,7 +5,7 @@ This script pings a device on your network and reports whether it is online or n
 - `DEVICE`: the IP address or hostname of the device
 - `IDX`: the idx of the switch in Domoticz to set on or off
 - `INTERVAL`: the interval at which to check whether the device is online in seconds
-- `COOLDOWN`: the amount of seconds a device can be offline before it is actually reported to Domoticz
+- `COOLDOWN`: the amount of seconds a device can be offline before it is actually reported as such to Domoticz
 
 All credits go to "Chopper_Rob" for the core logic of this script, as published on https://www.domoticz.com/wiki/Presence_detection.
 
