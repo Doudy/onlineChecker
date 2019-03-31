@@ -1,12 +1,10 @@
-#!/usr/bin/python3 -u
-
 import sys
 import subprocess
 import datetime
 import time
 import requests
 
-import credentials
+from credentials import *
 
 if len(sys.argv) != 5:
     raise Exception('Script requires four arguments: DEVICE IDX INTERVAL COOLDOWN')
@@ -48,7 +46,7 @@ def infiniteLoop():
             lastSeen = datetime.datetime.now()
             if pingReply != previousReply:
                 if lastReported == 1:
-                    print(f'{DEVICE} came online, no need to tell Domoticz.')
+                    print(f'{DEVICE} came back online, no need to tell Domoticz.')
                 else:
                     if domoStatus():
                         print(f'{DEVICE} is online, but Domoticz already knew.')
