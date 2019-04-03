@@ -1,6 +1,8 @@
 # onlineChecker
 
-This script pings a device on your network and reports whether it is online or not to Domoticz by setting a switch. Four arguments are required by the script:
+This script pings a device on your network and reports whether it is online or not to Domoticz by setting a switch. In a wider context this can then be used to detect the presence of someone in your house.
+
+Four arguments are required by the script:
 
 - `DEVICE`: the IP address or hostname of the device
 - `IDX`: the idx of the switch in Domoticz to set on or off
