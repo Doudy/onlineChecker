@@ -1,1 +1,5 @@
 credentials.py
+
+# python junk files
+__pycache__
+*.pyc
