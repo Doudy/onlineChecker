@@ -2,7 +2,9 @@ import sys
 import subprocess
 import datetime
 import time
+
 import requests
+from fritzconnection import FritzHosts
 
 try:
     from credentials import *
@@ -50,7 +52,9 @@ def infiniteLoop():
     lastSeen = datetime.datetime.now()
 
     while True:
-        pingReply = subprocess.call(f'ping -q -c1 -W 1 {DEVICE} > /dev/null', shell=True)
+        online = FritzHosts(password=FRITZ_PASS).get_specific_host_entry(MAC_ADDRESS)['NewActive']
+        pingReply = 0 if online == '1' else 1
+        #pingReply = subprocess.call(f'ping -q -c1 -W 1 {DEVICE} > /dev/null', shell=True)
 
         if pingReply == 0: # 0 means device is online!
             lastSeen = datetime.datetime.now()
