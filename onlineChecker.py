@@ -4,7 +4,10 @@ import datetime
 import time
 import requests
 
-from credentials import *
+try:
+    from credentials import *
+except ModuleNotFoundError:
+    print('Copy/rename credentials.py.template to credentials.py and edit it with your own details.')
 
 if len(sys.argv) != 5:
     raise Exception('Script requires four arguments: DEVICE IDX INTERVAL COOLDOWN')
@@ -17,7 +20,14 @@ COOLDOWN = float(sys.argv[4])
 DOMO_URL = f'http://{DOMO_SERVER}/json.htm?'
 
 def domoRequest(req):
-    return requests.get(DOMO_URL + req, auth=(DOMO_USER, DOMO_PASS)).json()
+    try:
+        r = requests.get(DOMO_URL + req, auth=(DOMO_USER, DOMO_PASS))
+    except requests.exceptions.ConnectionError:
+        raise Exception(f'Could not connect to {DOMO_SERVER}.')
+    if r.ok:
+        return r.json()
+    else:
+        raise Exception(f'Could not connect to Domoticz (status code {r.status_code}).')
 
 def domoCommand(cmd):
     print(domoRequest(f'type=command&param=switchlight&idx={IDX}&switchcmd={cmd}')['status'])
