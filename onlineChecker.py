@@ -1,39 +1,31 @@
-import sys
 import subprocess
 import datetime
 import time
+
 import requests
 
 try:
     from credentials import *
 except ModuleNotFoundError:
-    print('Copy/rename credentials.py.template to credentials.py and edit it with your own details.')
+    raise Exception('Copy/rename credentials.py.template to credentials.py and edit it with your own details.')
 
-if len(sys.argv) != 5:
-    raise Exception('Script requires four arguments: DEVICE IDX INTERVAL COOLDOWN')
-
-DEVICE = sys.argv[1]
-IDX = sys.argv[2]
-INTERVAL = float(sys.argv[3])
-COOLDOWN = float(sys.argv[4])
-
-DOMO_URL = f'http://{DOMO_SERVER}/json.htm?'
+IDX = str(IDX)
+DOMO_URL = 'http://'+DOMO_SERVER+'/json.htm?'
 
 def domoRequest(req):
     try:
-        r = requests.get(DOMO_URL + req, auth=(DOMO_USER, DOMO_PASS))
+        r = requests.get(DOMO_URL+req, auth=(DOMO_USER, DOMO_PASS))
     except requests.exceptions.ConnectionError:
-        raise Exception(f'Could not connect to {DOMO_SERVER}.')
+        raise Exception('Could not connect to '+DOMO_SERVER+'.')
     if r.ok:
         return r.json()
-    else:
-        raise Exception(f'Could not connect to Domoticz (status code {r.status_code}).')
+    raise Exception('Could not connect to Domoticz (status code '+r.status_code+'.')
 
 def domoCommand(cmd):
-    print(domoRequest(f'type=command&param=switchlight&idx={IDX}&switchcmd={cmd}')['status'])
+    print(domoRequest('type=command&param=switchlight&idx='+IDX+'&switchcmd='+cmd)['status'])
 
 def domoStatus():
-    response = domoRequest(f'type=devices&rid={IDX}')
+    response = domoRequest('type=devices&rid='+IDX)
 
     if 'result' in response:
         status = response['result'][0]['Status']
@@ -41,8 +33,8 @@ def domoStatus():
             return True
         if status == 'Off':
             return False
-        raise Exception(f'Switch with idx {IDX} has unknown status ("{status}").')
-    raise Exception(f'Switch with idx {IDX} does not exist.')
+        raise Exception('Switch with idx '+IDX+' has unknown status ("'+status+'").')
+    raise Exception('Switch with idx '+IDX+' does not exist.')
 
 def infiniteLoop():
     previousReply = -1
@@ -50,30 +42,30 @@ def infiniteLoop():
     lastSeen = datetime.datetime.now()
 
     while True:
-        pingReply = subprocess.call(f'ping -q -c1 -W 1 {DEVICE} > /dev/null', shell=True)
+        pingReply = subprocess.call('ping -q -c1 -W 1 '+DEVICE+' > /dev/null', shell=True)
 
         if pingReply == 0: # 0 means device is online!
             lastSeen = datetime.datetime.now()
             if pingReply != previousReply:
                 if lastReported == 1:
-                    print(f'{DEVICE} came back online, no need to tell Domoticz.')
+                    print(DEVICE+' came back online, no need to tell Domoticz.')
                 else:
                     if domoStatus():
-                        print(f'{DEVICE} is online, but Domoticz already knew.')
+                        print(DEVICE+' is online, but Domoticz already knew.')
                     else:
-                        print(f'{DEVICE} came online, telling Domoticz it\'s back.')
+                        print(DEVICE+' came online, telling Domoticz it\'s back.')
                         domoCommand('On')
                     lastReported = 1
 
         if pingReply != 0: # device is offline or responds too slow
             if pingReply != previousReply:
-                print(f'{DEVICE} went offline, waiting for it to come back...')
+                print(DEVICE+' went offline, waiting for it to come back...')
             if (datetime.datetime.now() - lastSeen).total_seconds() > COOLDOWN and lastReported != 0:
                 if domoStatus():
-                    print(f'{DEVICE} went offline, telling Domoticz it\'s gone.')
+                    print(DEVICE+' went offline, telling Domoticz it\'s gone.')
                     domoCommand('Off')
                 else:
-                    print(f'{DEVICE} is offline, but Domoticz already knew.')
+                    print(DEVICE+' is offline, but Domoticz already knew.')
                 lastReported = 0
 
         time.sleep(INTERVAL)
