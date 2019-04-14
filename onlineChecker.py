@@ -46,7 +46,7 @@ def infiniteLoop():
 
     while True:
         pingReply = subprocess.call('ping -q -c1 -W 1 '+DEVICE+' > /dev/null', shell=True)
-        isOnline = True if pingReply == 0 else False
+        isOnline = bool(pingReply == 0)
 
         if isOnline:
             lastSeen = datetime.datetime.now()
@@ -63,7 +63,7 @@ def infiniteLoop():
         else:
             if isOnline != wasOnline:
                 print(DEVICE+' went offline, waiting for it to come back...')
-            if (datetime.datetime.now() - lastSeen).total_seconds() > COOLDOWN and lastReported != False:
+            if (datetime.datetime.now() - lastSeen).total_seconds() > COOLDOWN and not lastReported:
                 if domoStatus():
                     print(DEVICE+' went offline, telling Domoticz it\'s gone.')
                     domoCommand('Off')
