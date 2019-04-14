@@ -1,7 +1,8 @@
 # domoticz login details
-DOMO_SERVER = 'localhost:8080'  # the IP address or hostname of the device
+DOMO_SERVER = 'localhost:8080'  # the IP address or hostname and port of Domoticz' server
 DOMO_USER = 'username'
 DOMO_PASS = 'password'
+DOMO_PROTECTION = ''  # the password used to protect lights/switches (leave blank if not in use)
 
 # device we want to ping
 DEVICE = '0.0.0.0'  # the IP address or hostname of the device

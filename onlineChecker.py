@@ -22,7 +22,7 @@ def domoRequest(req):
     raise Exception('Could not connect to Domoticz (status code '+r.status_code+'.')
 
 def domoCommand(cmd):
-    print(domoRequest('type=command&param=switchlight&idx='+IDX+'&switchcmd='+cmd)['status'])
+    print(domoRequest('type=command&param=switchlight&idx='+IDX+'&switchcmd='+cmd+'&passcode='+DOMO_PROTECTION)['status'])
 
 def domoStatus():
     response = domoRequest('type=devices&rid='+IDX)
