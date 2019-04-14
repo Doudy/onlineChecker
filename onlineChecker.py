@@ -28,7 +28,10 @@ def domoStatus():
     response = domoRequest('type=devices&rid='+IDX)
 
     if 'result' in response:
-        status = response['result'][0]['Status']
+        try:
+            status = response['result'][0]['Status']
+        except:
+            raise Exception('Unknown response '+response['result']+'.')
         if status == 'On':
             return True
         if status == 'Off':
@@ -37,17 +40,18 @@ def domoStatus():
     raise Exception('Switch with idx '+IDX+' does not exist.')
 
 def infiniteLoop():
-    previousReply = -1
-    lastReported = -1
+    wasOnline = None
+    lastReported = None
     lastSeen = datetime.datetime.now()
 
     while True:
         pingReply = subprocess.call('ping -q -c1 -W 1 '+DEVICE+' > /dev/null', shell=True)
+        isOnline = True if pingReply == 0 else False
 
-        if pingReply == 0: # 0 means device is online!
+        if isOnline:
             lastSeen = datetime.datetime.now()
-            if pingReply != previousReply:
-                if lastReported == 1:
+            if isOnline != wasOnline:
+                if lastReported:
                     print(DEVICE+' came back online, no need to tell Domoticz.')
                 else:
                     if domoStatus():
@@ -55,20 +59,19 @@ def infiniteLoop():
                     else:
                         print(DEVICE+' came online, telling Domoticz it\'s back.')
                         domoCommand('On')
-                    lastReported = 1
-
-        if pingReply != 0: # device is offline or responds too slow
-            if pingReply != previousReply:
+                    lastReported = True
+        else:
+            if isOnline != wasOnline:
                 print(DEVICE+' went offline, waiting for it to come back...')
-            if (datetime.datetime.now() - lastSeen).total_seconds() > COOLDOWN and lastReported != 0:
+            if (datetime.datetime.now() - lastSeen).total_seconds() > COOLDOWN and lastReported != False:
                 if domoStatus():
                     print(DEVICE+' went offline, telling Domoticz it\'s gone.')
                     domoCommand('Off')
                 else:
                     print(DEVICE+' is offline, but Domoticz already knew.')
-                lastReported = 0
+                lastReported = False
 
+        wasOnline = isOnline
         time.sleep(INTERVAL)
-        previousReply = pingReply
 
 infiniteLoop()
