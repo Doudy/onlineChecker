@@ -11,7 +11,7 @@ onlineChecker depends on the [`requests` library](http://docs.python-requests.or
 
 `pip install requests`
 
-Copy or rename `credentials.py.template` to `credentials.py` and edit the file so that it contains your Domoticz and device details.
+Copy or rename `credentials.template.py` to `credentials.py` and edit the file so that it contains your Domoticz and device details.
 
 You can now run the script!
 
