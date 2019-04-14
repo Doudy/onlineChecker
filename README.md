@@ -35,7 +35,7 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 ```
-Once that file is in place you can enable/disable, start/stop it etc. using `systemctl`.
+Once that file is in place you can enable/disable, start/stop etc. it using `systemctl`.
 
 That's all!
 
