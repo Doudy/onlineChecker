@@ -11,13 +11,17 @@ onlineChecker depends on the [`requests` library](http://docs.python-requests.or
 
 `pip install requests`
 
-Copy or rename `credentials.template.py` to `credentials.py` and edit the file so that it contains your Domoticz and device details.
+Copy or rename `config.template.ini` to `config.ini` and edit the file so that it contains your Domoticz and device details.
 
 You can now run the script!
 
+If you want to have multiple config files, you can specify which one to load by giving its filename as an argument in the command-line: `python online_checker.py config2.ini`
+
+
+
 ## Run as a systemd service
 
-To help manage when and how the script runs, you can install it as a `systemd` service. This will make it very easy to always run in the background, have it restart automatically, have it run on startup, it will log properly etc. You can learn more about systemd [here](https://wiki.debian.org/systemd).
+To help manage when and how the script runs, you can install it as a `systemd` service. This will make it very easy to always run in the background, restart automatically, run on startup, log properly etc. You can learn more about systemd [here](https://wiki.debian.org/systemd).
 
 A simple `.service` file to manage this script goes into `/etc/systemd/system/` and could like this:
 
@@ -27,7 +31,7 @@ Description=onlineChecker
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 -u onlineChecker.py
+ExecStart=/usr/bin/python3 -u online_checker.py
 WorkingDirectory=/home/jorijnsmit/domoticz/scripts/onlineChecker
 User=jorijnsmit
 Restart=always
@@ -35,10 +39,10 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 ```
-Once that file is in place you can enable/disable, start/stop etc. it using `systemctl`.
+Once that file is in place you can enable/disable, start/stop etc. it using `systemctl` commands. Running `python` unbuffered (`-u`) makes sure the print messages don't get buffered but go straight to the console/log.
 
 That's all!
 
 ## Credits
 
-All credits go to "Chopper_Rob" for the core logic of this script, as published on https://www.domoticz.com/wiki/Presence_detection.
+All credits go to "Chopper_Rob" for the core logic of this script, as I found it published on https://www.domoticz.com/wiki/Presence_detection (original url is unfortunately offline).
