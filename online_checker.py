@@ -16,7 +16,6 @@ try:
     DEVICE = CONFIG['DEVICE']
 except (KeyError, TypeError):
     raise Exception('Config file is unreadable or incomplete.')
-
 DOMO['URL'] = 'http://'+DOMO['SERVER']+'/json.htm?'
 
 def domo_request(req):
@@ -29,7 +28,8 @@ def domo_request(req):
     raise Exception('Could not connect to Domoticz (status code '+r.status_code+'.')
 
 def domo_command(cmd):
-    print(domo_request('type=command&param=switchlight&idx='+DEVICE['IDX']+'&switchcmd='+cmd+'&passcode='+DOMO['PROTECTION'])['status'])
+    print(domo_request('type=command&param=switchlight&idx='\
+    +DEVICE['IDX']+'&switchcmd='+cmd+'&passcode='+DOMO['PROTECTION'])['status'])
 
 def domo_status():
     response = domo_request('type=devices&rid='+DEVICE['IDX'])
@@ -46,7 +46,7 @@ def domo_status():
         raise Exception('Switch with idx '+DEVICE['IDX']+' has unknown status ("'+status+'").')
     raise Exception('Switch with idx '+DEVICE['IDX']+' does not exist.')
 
-def ping_device(ip):
+def ping_device(ip=DEVICE['IP']):
     ping_reply = subprocess.call('ping -q -c1 -W 1 '+ip+' > /dev/null', shell=True)
     return bool(ping_reply == 0)
 
@@ -56,7 +56,7 @@ def infinite_loop():
     last_seen = datetime.datetime.now()
 
     while True:
-        is_online = ping_device(DEVICE['IP'])
+        is_online = ping_device()
 
         if is_online:
             last_seen = datetime.datetime.now()
@@ -72,7 +72,7 @@ def infinite_loop():
                     last_reported = True
         else:
             if is_online != was_online:
-                print(DEVICE+' went offline, waiting for it to come back...')
+                print(DEVICE['IP']+' went offline, waiting for it to come back...')
             if (datetime.datetime.now() - last_seen).total_seconds() > DEVICE.getint('COOLDOWN')\
             and not last_reported:
                 if domo_status():
