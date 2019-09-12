@@ -25,7 +25,7 @@ def domo_request(req):
         raise Exception('Could not connect to '+DOMO['SERVER']+'.')
     if r.ok:
         return r.json()
-    raise Exception('Could not connect to Domoticz (status code '+r.status_code+'.')
+    raise Exception('Could not connect to Domoticz (status code '+str(r.status_code)+').')
 
 def domo_command(cmd):
     print(domo_request('type=command&param=switchlight&idx='\
@@ -50,6 +50,9 @@ def ping_device(ip=DEVICE['IP']):
     ping_reply = subprocess.call('ping -q -c1 -W 1 '+ip+' > /dev/null', shell=True)
     return bool(ping_reply == 0)
 
+def timeout(last_seen):
+    return (datetime.datetime.now() - last_seen).total_seconds() > DEVICE.getint('COOLDOWN')
+
 def infinite_loop():
     was_online = None
     last_reported = None
@@ -73,8 +76,7 @@ def infinite_loop():
         else:
             if is_online != was_online:
                 print(DEVICE['IP']+' went offline, waiting for it to come back...')
-            if (datetime.datetime.now() - last_seen).total_seconds() > DEVICE.getint('COOLDOWN')\
-            and not last_reported:
+            if timeout(last_seen) and (last_reported or last_reported == None):
                 if domo_status():
                     print(DEVICE['IP']+' went offline, telling Domoticz it\'s gone.')
                     domo_command('Off')
