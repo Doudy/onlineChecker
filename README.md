@@ -4,14 +4,12 @@ This script pings a device on your network and reports whether it is online or n
 
 ## Installation
 
-Navigate to your Domoticz' scripts folder (mine's `~/domoticz/scripts/`) and clone this repository into that directory:
+- Navigate to your Domoticz' scripts folder (mine's `~/domoticz/scripts/`) and clone this repository into that directory:
 `git clone https://github.com/jorijnsmit/onlineChecker.git`
 
-onlineChecker depends on the [`requests` library](http://docs.python-requests.org/en/master/):
+- onlineChecker depends on the [`requests` library](http://docs.python-requests.org/en/master/): `pip install requests`
 
-`pip install requests`
-
-Copy or rename `config.template.ini` to `config.ini` and edit the file so that it contains your Domoticz and device details.
+- Copy or rename `config.template.ini` to `config.ini` and edit the file so that it contains your Domoticz and device details.
 
 You can now run the script!
 
@@ -23,7 +21,7 @@ If you want to have multiple config files, you can specify which one to load by 
 
 To help manage when and how the script runs, you can install it as a `systemd` service. This will make it very easy to always run in the background, restart automatically, run on startup, log properly etc. You can learn more about systemd [here](https://wiki.debian.org/systemd).
 
-A simple `.service` file to manage this script goes into `/etc/systemd/system/` and could like this:
+A simple `.service` file to manage this script goes into `/etc/systemd/system/` and could look like this:
 
 ```
 [Unit]
@@ -39,7 +37,9 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 ```
-Once that file is in place you can enable/disable, start/stop etc. it using `systemctl` commands. Running `python` unbuffered (`-u`) makes sure the print messages don't get buffered but go straight to the console/log.
+Running `python` unbuffered (`-u`) makes sure the print messages don't get buffered but go straight to the console/log.
+
+Once that file is in place you can enable/disable, start/stop etc. it using `systemctl` commands.
 
 That's all!
 
