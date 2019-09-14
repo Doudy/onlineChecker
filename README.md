@@ -9,6 +9,8 @@ This script pings a device on your network and reports whether it is online or n
 
 - onlineChecker depends on the [`requests` library](http://docs.python-requests.org/en/master/): `pip install requests`
 
+- You might also need to install [`configparser`](https://docs.python.org/3/library/configparser.html): `pip install configparser`
+
 - Copy or rename `config.template.ini` to `config.ini` and edit the file so that it contains your Domoticz and device details.
 
 You can now run the script!
